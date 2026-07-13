@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIS 3353 · Computer Systems Security · Fall 2026 - Course Hub</title>
+<style>
+:root{
+  --red:#CB333B;
+  --red-dark:#A32830;
+  --red-soft:rgba(203,51,59,.10);
+  --bg:#f7f7f9;
+  --surface:#ffffff;
+  --surface-2:#f1f1f4;
+  --text:#1c1e22;
+  --muted:#5b616b;
+  --line:#e2e3e8;
+  --accent-ink:#ffffff;
+  --ok:#1a7f4e;
+  --shadow:0 1px 3px rgba(20,22,26,.07),0 8px 24px rgba(20,22,26,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131518;
+    --surface:#1c1f24;
+    --surface-2:#24282e;
+    --text:#e8e9ec;
+    --muted:#9aa1ab;
+    --line:#33383f;
+    --red-soft:rgba(203,51,59,.20);
+    --ok:#4cc38a;
+    --shadow:0 1px 3px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.30);
+  }
+}
+:root[data-theme=dark]{
+  --bg:#131518;
+  --surface:#1c1f24;
+  --surface-2:#24282e;
+  --text:#e8e9ec;
+  --muted:#9aa1ab;
+  --line:#33383f;
+  --red-soft:rgba(203,51,59,.20);
+  --ok:#4cc38a;
+  --shadow:0 1px 3px rgba(0,0,0,.35),0 8px 24px rgba(0,0,0,.30);
+}
+:root[data-theme=light]{
+  --bg:#f7f7f9;
+  --surface:#ffffff;
+  --surface-2:#f1f1f4;
+  --text:#1c1e22;
+  --muted:#5b616b;
+  --line:#e2e3e8;
+  --red-soft:rgba(203,51,59,.10);
+  --ok:#1a7f4e;
+  --shadow:0 1px 3px rgba(20,22,26,.07),0 8px 24px rgba(20,22,26,.06);
+}
+.theme-fab{position:fixed;right:16px;bottom:16px;z-index:200;background:var(--surface);color:var(--text);
+  border:1px solid var(--line);border-radius:999px;padding:.5rem .9rem;font:inherit;font-size:.85rem;
+  font-weight:600;cursor:pointer;box-shadow:var(--shadow)}
+@media print{.theme-fab{display:none}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.55;font-size:16px;
+  -webkit-text-size-adjust:100%;
+}
+a{color:var(--red);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+h2{font-size:1.45rem;margin:0 0 .35rem;letter-spacing:-.01em}
+h3{font-size:1.05rem;margin:1.2rem 0 .5rem}
+.kicker{color:var(--red);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;margin:0 0 .3rem}
+.sub{color:var(--muted);margin:0 0 1.2rem;font-size:.95rem}
+section{padding:2.6rem 0 .6rem}
+
+/* ---------- hero ---------- */
+.hero{
+  background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 70%);
+  color:#fff;padding:2.8rem 0 2.4rem;
+}
+.hero .eyebrow{font-size:.8rem;text-transform:uppercase;letter-spacing:.14em;opacity:.85;margin:0 0 .5rem;font-weight:600}
+.hero h1{font-size:clamp(1.7rem,4.5vw,2.6rem);margin:0 0 .35rem;line-height:1.15;letter-spacing:-.02em}
+.hero .tagline{font-size:1.05rem;opacity:.92;margin:0 0 1.4rem;max-width:46rem}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem}
+.hero-card{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);
+  border-radius:12px;padding:.85rem 1rem;backdrop-filter:blur(2px);
+}
+.hero-card .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;opacity:.8;font-weight:700;margin-bottom:.2rem}
+.hero-card .val{font-size:.95rem;font-weight:600}
+.hero-card .val small{display:block;font-weight:400;opacity:.9;font-size:.85rem;margin-top:.1rem}
+.hero-card a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+.hero-card a.btn-book{
+  display:inline-block;margin-top:.45rem;background:#fff;color:var(--red);
+  font-weight:700;font-size:.85rem;padding:.4rem .85rem;border-radius:999px;text-decoration:none;
+}
+.hero-card a.btn-book:hover{transform:translateY(-1px)}
+
+/* ---------- nav ---------- */
+nav.hubnav{
+  position:sticky;top:0;z-index:50;background:var(--surface);
+  border-bottom:1px solid var(--line);box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+nav.hubnav .wrap{display:flex;gap:.25rem;overflow-x:auto;padding-top:.55rem;padding-bottom:.55rem}
+nav.hubnav a{
+  white-space:nowrap;font-size:.87rem;font-weight:600;color:var(--muted);
+  padding:.35rem .75rem;border-radius:999px;
+}
+nav.hubnav a:hover{color:var(--red);background:var(--red-soft);text-decoration:none}
+
+/* ---------- this week ---------- */
+.tw-card{
+  background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--red);
+  border-radius:14px;box-shadow:var(--shadow);padding:1.3rem 1.4rem;
+}
+.tw-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem;margin-bottom:.6rem}
+.tw-head .big{font-size:1.3rem;font-weight:800;letter-spacing:-.01em}
+.tw-head .range{color:var(--muted);font-size:.92rem}
+.tw-sessions{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.tw-session{
+  background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+  padding:.7rem .85rem;font-size:.92rem;
+}
+.tw-session.is-today{border-color:var(--red);box-shadow:inset 0 0 0 1px var(--red)}
+.tw-session .d{font-weight:700;font-size:.8rem;color:var(--red);text-transform:uppercase;letter-spacing:.06em}
+.tw-session .t{margin:.15rem 0 .3rem;font-weight:600}
+.tw-session.noclass .t{color:var(--muted);font-style:italic;font-weight:500}
+.tw-note{margin-top:.75rem;font-size:.88rem;color:var(--muted)}
+.countdown{display:flex;align-items:center;flex-wrap:wrap;gap:1.2rem}
+.countdown .num{font-size:3rem;font-weight:800;color:var(--red);line-height:1}
+.countdown .cap{font-size:1rem;color:var(--muted);max-width:28rem}
+
+/* ---------- badges ---------- */
+.badge{
+  display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.05em;
+  text-transform:uppercase;padding:.13rem .5rem;border-radius:999px;
+  border:1px solid transparent;margin:.1rem .15rem .1rem 0;white-space:nowrap;
+}
+.b-lab{background:rgba(37,99,235,.12);color:#2563eb;border-color:rgba(37,99,235,.3)}
+.b-quiz{background:rgba(217,119,6,.12);color:#d97706;border-color:rgba(217,119,6,.3)}
+.b-exam{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+.b-capstone{background:rgba(124,58,237,.12);color:#7c3aed;border-color:rgba(124,58,237,.3)}
+.b-milestone{background:rgba(22,163,74,.12);color:var(--ok);border-color:rgba(22,163,74,.3)}
+.b-noclass{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+@media (prefers-color-scheme: dark){
+  .b-lab{color:#7ba7f7}.b-quiz{color:#efa94b}.b-capstone{color:#b394f5}
+}
+
+/* ---------- schedule ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 1rem}
+.chip{
+  border:1px solid var(--line);background:var(--surface);color:var(--muted);
+  font:inherit;font-size:.85rem;font-weight:600;padding:.35rem .9rem;
+  border-radius:999px;cursor:pointer;
+}
+.chip:hover{border-color:var(--red);color:var(--red)}
+.chip.active{background:var(--red);border-color:var(--red);color:#fff}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow)}
+table.sched{border-collapse:collapse;width:100%;font-size:.92rem;min-width:640px}
+.sched th{
+  text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;
+  color:var(--muted);padding:.7rem .85rem;border-bottom:2px solid var(--line);
+  background:var(--surface-2);position:sticky;top:0;
+}
+.sched td{padding:.6rem .85rem;border-bottom:1px solid var(--line);vertical-align:top}
+.sched tr:last-child td{border-bottom:none}
+.sched td.wk{color:var(--muted);font-weight:700;white-space:nowrap}
+.sched td.date{white-space:nowrap;font-weight:600}
+.sched tr.noclass td{color:var(--muted)}
+.sched tr.noclass td .topic{font-style:italic}
+.sched tr.current-week td{background:var(--red-soft)}
+.sched tr.is-today td{box-shadow:inset 3px 0 0 var(--red)}
+.sched tr.hidden-row{display:none}
+.now-tag{
+  display:inline-block;background:var(--red);color:#fff;font-size:.62rem;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;padding:.1rem .45rem;border-radius:4px;margin-left:.4rem;vertical-align:1px;
+}
+.sched-empty{padding:1rem;text-align:center;color:var(--muted);display:none}
+
+/* ---------- cards / panels ---------- */
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem 1.3rem;box-shadow:var(--shadow);margin-top:1rem;
+}
+.panel h3{margin-top:0}
+.steps{counter-reset:step;list-style:none;margin:.6rem 0 0;padding:0;display:grid;gap:.55rem}
+.steps li{position:relative;padding-left:2.2rem;font-size:.92rem}
+.steps li::before{
+  counter-increment:step;content:counter(step);
+  position:absolute;left:0;top:.05rem;width:1.5rem;height:1.5rem;border-radius:50%;
+  background:var(--red);color:#fff;font-weight:800;font-size:.78rem;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ---------- grading ---------- */
+.gbar{display:flex;height:2.6rem;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);margin:.9rem 0 .5rem}
+.gbar .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;min-width:0}
+.gbar .seg span{white-space:nowrap;overflow:hidden;text-overflow:clip;padding:0 .2rem}
+.g-labs{background:#2563eb}.g-quiz{background:#d97706}.g-mid{background:var(--red)}
+.g-final{background:#8d2026}.g-cap{background:#7c3aed}.g-att{background:#16a34a}
+.glegend{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;font-size:.87rem;color:var(--muted);margin-bottom:1rem}
+.glegend .dot{display:inline-block;width:.7rem;height:.7rem;border-radius:3px;margin-right:.35rem;vertical-align:-1px}
+.two-col{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start}
+.panel ul{margin:.4rem 0 0;padding-left:1.2rem}
+.panel li{margin:.3rem 0;font-size:.92rem}
+.cap-break{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+.cap-break td{padding:.4rem .2rem;border-bottom:1px solid var(--line)}
+.cap-break tr:last-child td{border-bottom:none}
+.cap-break td:last-child{text-align:right;font-weight:700;color:var(--red);white-space:nowrap}
+.callout{
+  border-left:4px solid var(--red);background:var(--red-soft);
+  border-radius:0 10px 10px 0;padding:.75rem 1rem;font-size:.9rem;margin-top:.9rem;
+}
+code{
+  background:var(--surface-2);border:1px solid var(--line);border-radius:5px;
+  padding:.08rem .35rem;font-size:.85em;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+
+/* ---------- resources ---------- */
+.res-grid{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.res{
+  display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:.75rem .95rem;box-shadow:var(--shadow);color:var(--text);
+}
+.res:hover{border-color:var(--red);text-decoration:none}
+.res .rname{font-weight:700;font-size:.93rem}
+.res .rdesc{font-size:.84rem;color:var(--muted);margin-top:.1rem}
+.res .rurl{font-size:.78rem;color:var(--red);margin-top:.25rem;word-break:break-all}
+
+/* ---------- policies ---------- */
+.pol-grid{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.pol{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.95rem 1.1rem;box-shadow:var(--shadow)}
+.pol h3{margin:0 0 .4rem;font-size:.98rem;color:var(--red)}
+.pol p,.pol li{font-size:.89rem;margin:.25rem 0}
+.pol ul{margin:.3rem 0 0;padding-left:1.15rem}
+
+/* ---------- footer ---------- */
+footer{
+  margin-top:3rem;background:var(--surface);border-top:1px solid var(--line);
+  padding:1.8rem 0 2.2rem;font-size:.86rem;color:var(--muted);
+}
+footer .links{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-bottom:.8rem}
+footer .links a{font-weight:600}
+
+/* ---------- print ---------- */
+@media print{
+  :root{--bg:#fff;--surface:#fff;--surface-2:#f4f4f4;--text:#000;--muted:#444;--line:#bbb;--shadow:none}
+  body{font-size:11pt}
+  nav.hubnav,.filters,.btn-book,.now-tag{display:none!important}
+  .hero{background:#fff!important;color:#000;border-bottom:3px solid var(--red);padding:1rem 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hero-card{background:#fff;border:1px solid #bbb;color:#000}
+  .hero h1{color:var(--red)}
+  section{padding:1rem 0 .2rem;break-inside:avoid-page}
+  .sched tr.hidden-row{display:table-row}
+  .sched tr.current-week td{background:#fff}
+  .gbar .seg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .table-scroll{overflow:visible;box-shadow:none}
+  a[href^="http"]::after{content:""}
+  tr,td,.pol,.panel{break-inside:avoid}
+}
+@media (max-width:560px){
+  .countdown .num{font-size:2.3rem}
+  .hero{padding:2rem 0 1.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <p class="eyebrow">University of the Incarnate Word · Fall 2026 · Section 01</p>
+    <h1>CIS 3353 - Computer Systems Security</h1>
+    <p class="tagline">Explore the threats and vulnerabilities inherent in computer systems and the methods of defending against them. Hands-on labs, quizzes, and reading run on Cengage MindTap through Canvas; a semester-long team capstone on GitHub ties it all together. The course also prepares you for the optional CompTIA Security+ (SY0-701) exam.</p>
+    <div class="hero-grid">
+      <div class="hero-card">
+        <div class="lbl">Class Meetings</div>
+        <div class="val">Mon &amp; Wed · 3:00–4:15 PM<small>Founders Hall G008 · Aug 24 – Dec 11</small></div>
+      </div>
+      <div class="hero-card">
+        <div class="lbl">Instructor</div>
+        <div class="val">Dr. Gonzalo D Parra<small><a href="mailto:gdparra@uiwtx.edu">gdparra@uiwtx.edu</a> · (210) 829-3146</small></div>
+      </div>
+      <div class="hero-card">
+        <div class="lbl">Office Hours</div>
+        <div class="val">Mon–Thu · 1:30–3:00 PM<small>Founders Hall G009 · scheduled meeting required</small>
+        <a class="btn-book" href="https://outlook.office.com/book/Advising@studentuiwtx.onmicrosoft.com/" target="_blank" rel="noopener">Book a slot →</a></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= NAV ================= -->
+<nav class="hubnav" aria-label="Course hub sections">
+  <div class="wrap">
+    <a href="#this-week">This Week</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#grading">Grading</a>
+    <a href="#mindtap">MindTap</a>
+    <a href="#capstone">Capstone</a>
+    <a href="#policies">Policies</a>
+  </div>
+</nav>
+
+<!-- ================= THIS WEEK ================= -->
+<section id="this-week">
+  <div class="wrap">
+    <p class="kicker">Right Now</p>
+    <h2>This Week</h2>
+    <p class="sub">Updates automatically from the Fall 2026 calendar. The matching rows are highlighted in the schedule below.</p>
+    <div class="tw-card" id="tw-card">
+      <noscript>Enable JavaScript to see the live "this week" view - or just find today's date in the schedule below.</noscript>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCHEDULE ================= -->
+<section id="schedule">
+  <div class="wrap">
+    <p class="kicker">Semester Map</p>
+    <h2>Full Schedule</h2>
+    <p class="sub">All 16 weeks. The outline is a guideline - changes are announced on Canvas. Filter by what you need to find:</p>
+    <div class="filters" id="filters" role="group" aria-label="Filter schedule">
+      <button class="chip active" data-filter="all">All sessions</button>
+      <button class="chip" data-filter="gpday">Group Project Days</button>
+      <button class="chip" data-filter="capstone">Capstone</button>
+      <button class="chip" data-filter="noclass">No class</button>
+    </div>
+    <div class="table-scroll">
+      <table class="sched" id="sched-table">
+        <thead>
+          <tr><th>Wk</th><th>Date</th><th>Topic</th><th>Notes</th></tr>
+        </thead>
+        <tbody id="sched-body"><!-- rendered by JS --></tbody>
+      </table>
+      <div class="sched-empty" id="sched-empty">No sessions match this filter.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GRADING ================= -->
+<section id="grading">
+  <div class="wrap">
+    <p class="kicker">How You're Graded</p>
+    <h2>Grading Breakdown</h2>
+    <p class="sub">Hands-on labs on MindTap and the team capstone each carry the most weight - this course rewards doing.</p>
+
+    <div class="gbar" role="img" aria-label="Grade weights: Labs 35%, Quizzes 20%, Capstone 35%, Attendance 10%">
+      <div class="seg g-labs" style="flex:35"><span>Labs 35%</span></div>
+      <div class="seg g-quiz" style="flex:20"><span>Quizzes 20%</span></div>
+      <div class="seg g-cap" style="flex:35"><span>Capstone 35%</span></div>
+      <div class="seg g-att" style="flex:10"><span>10%</span></div>
+    </div>
+    <div class="glegend">
+      <span><span class="dot g-labs"></span>Hands-on Labs (MindTap via Canvas) - 35%</span>
+      <span><span class="dot g-quiz"></span>Quizzes (MindTap via Canvas) - 20%</span>
+      <span><span class="dot g-cap"></span>Capstone Project - 35%</span>
+      <span><span class="dot g-att"></span>Attendance &amp; Participation - 10%</span>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <h3>Capstone: the 35%, broken down</h3>
+        <p style="font-size:.9rem;margin:.2rem 0 0">A semester-long <strong>team</strong> project. Pick a scenario, integrate at least three course modules, and <strong>Build</strong> (replicate the environment in VMs and virtual networks), <strong>Attack</strong> (demonstrate the threat), and <strong>Defend</strong> (implement and verify controls).</p>
+        <table class="cap-break">
+          <tr><td>Capstone Proposal (approved by instructor)</td><td>1%</td></tr>
+          <tr><td>Project Implementation (Build / Attack / Defend, tracked on GitHub)</td><td>15%</td></tr>
+          <tr><td>Final Presentation (Week 15)</td><td>10%</td></tr>
+          <tr><td>GitHub Wiki Page - the final report</td><td>9%</td></tr>
+        </table>
+        <div class="callout">Missing your scheduled presentation slot costs an automatic <strong>15% off your team's total capstone grade</strong>.</div>
+        <div class="callout" style="margin-top:.5rem"><strong>Your repository is the record of your effort.</strong> Individual grades scale with verified contribution: only real artifacts count (configs, scripts, screenshots, wiki pages, closed board issues with matching commits). A one-line commit claiming "done on my own device" earns nothing, and end-of-semester bulk commits are investigated. Keep the Individual Contribution Summary Table in your README current. Individual grades are capped per component.</div>
+      </div>
+      <div class="panel">
+        <h3>Team GitHub requirements</h3>
+        <ul>
+          <li><strong>Teams of 2 to 3 students - no solo capstones.</strong> Before you commit to a team, compare schedules with your prospective teammates: you will collaborate and learn together all semester, so make sure you share workable meeting times.</li>
+          <li>Create a <strong>private team GitHub repository</strong> - all advancements and contributions live there.</li>
+          <li>Add <code>gdparra-edu</code> and <code>cyberknowledge</code> as <strong>collaborators</strong>.</li>
+          <li>Manage all project activity on the repo's integrated <strong>GitHub Project board</strong>.</li>
+          <li>Write the final report as a <strong>GitHub Wiki page</strong>; keep presentation materials in the repo.</li>
+          <li>Vote (unanimously) on your <strong>commit approach</strong> and declare it on the proposal: <em>Individual Commits</em> (everyone pushes their own work; points follow the committer) or <em>Delegated Commits</em> (designated members push for the team; points follow the board assignee). Not unanimous? You default to Individual Commits.</li>
+          <li><strong>Group Project Days:</strong> several class sessions (roughly monthly, marked on the schedule) are fully dedicated to capstone coordination with the instructor in the room. Additional ones may be announced on Canvas.</li>
+          <li>Submit the repo + Project board links through the Capstone assignment on <strong>Canvas</strong>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MINDTAP ================= -->
+<section id="mindtap">
+  <div class="wrap">
+    <p class="kicker">Labs, Quizzes &amp; Reading</p>
+    <h2>Everything Runs on Cengage MindTap</h2>
+    <p class="sub">All hands-on labs, quizzes, and reading for this course live on the Cengage MindTap platform, reached through Canvas. There are no lab repositories to accept - just your MindTap course.</p>
+    <div class="two-col">
+      <div class="panel">
+        <h3>How to get into MindTap</h3>
+        <ol class="steps">
+          <li>Open our course in <strong>Canvas</strong> and click the <strong>MindTap</strong> link in the course navigation.</li>
+          <li>Sign in or create your <strong>Cengage</strong> account and register your access code when prompted (the first-day-of-class free trial covers you until you purchase).</li>
+          <li>Your labs, quizzes, and readings appear on the <strong>MindTap Learning Path</strong>, organized by module.</li>
+          <li>Work through each item there. <strong>Due dates are posted on Canvas</strong> - check the Canvas calendar and announcements, not just MindTap.</li>
+        </ol>
+      </div>
+      <div class="panel">
+        <h3>What lives where</h3>
+        <ul>
+          <li><strong>Hands-on Labs, Quizzes, and Reading:</strong> MindTap via Canvas.</li>
+          <li><strong>Due dates and announcements:</strong> Canvas.</li>
+          <li><strong>The semester-long capstone:</strong> your team's GitHub repository (see the Capstone section).</li>
+          <li><strong>The public course site</strong> (this hub, the outline, capstone decks and forms): <a href="https://uiwcyber.github.io/cis3353-public/" target="_blank" rel="noopener">uiwcyber.github.io/cis3353-public</a>.</li>
+        </ul>
+        <div class="callout"><strong>Your machine:</strong> for the capstone you will build environments in virtual machines. Install <strong>VirtualBox</strong> or <strong>VMware</strong>, and pull the images your chosen project needs - commonly <strong>Kali Linux</strong> and <strong>pfSense</strong>. MindTap labs run in the browser and need nothing beyond a current browser.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CAPSTONE RESOURCES ================= -->
+<section id="capstone">
+  <div class="wrap">
+    <p class="kicker">Team Project</p>
+    <h2>Capstone Decks &amp; Forms</h2>
+    <p class="sub">The full capstone playbook. Start with the Kick-off deck, then work through the fillable forms. All of these are also on the <a href="https://uiwcyber.github.io/cis3353-public/" target="_blank" rel="noopener">public course site</a>.</p>
+
+    <h3>Slide decks</h3>
+    <div class="res-grid">
+      <a class="res" href="slides/lecture-01-capstone-kickoff-guide.html">
+        <div class="rname">Capstone Kick-off Guide</div>
+        <div class="rdesc">Build / Attack / Defend, team rules, GitHub setup, and grading - start here.</div>
+      </a>
+      <a class="res" href="slides/lecture-02-capstone-presentations-day1.html">
+        <div class="rname">Presentations - Day 1</div>
+        <div class="rdesc">Running order and expectations for the first day of capstone demos (Week 15).</div>
+      </a>
+      <a class="res" href="slides/lecture-03-capstone-presentations-day2.html">
+        <div class="rname">Presentations - Day 2</div>
+        <div class="rdesc">Running order and expectations for the second day of capstone demos (Week 15).</div>
+      </a>
+      <a class="res" href="slides/lecture-99-capstone-presentation-example.html">
+        <div class="rname">Presentation Example</div>
+        <div class="rdesc">A worked example presentation to model your team's final talk on.</div>
+      </a>
+    </div>
+
+    <h3>Fillable forms</h3>
+    <div class="res-grid">
+      <a class="res" href="capstone/capstone-proposal.html">
+        <div class="rname">Capstone Proposal</div>
+        <div class="rdesc">Declare your scenario, chosen modules, team, and commit-approach vote. Due Sep 16.</div>
+      </a>
+      <a class="res" href="capstone/capstone-team-formation.html">
+        <div class="rname">Team Formation Guide</div>
+        <div class="rdesc">Form your team of 2 to 3, compare schedules, and assign roles.</div>
+      </a>
+      <a class="res" href="capstone/capstone-readiness-checklist.html">
+        <div class="rname">Readiness Checklist</div>
+        <div class="rdesc">Confirm your repo, board, collaborators, and environment are set before you build.</div>
+      </a>
+      <a class="res" href="capstone/capstone-grading-rubric.html">
+        <div class="rname">Grading Rubric</div>
+        <div class="rdesc">How every capstone component is scored across all sections.</div>
+      </a>
+      <a class="res" href="capstone/capstone-presentation-rubric.html">
+        <div class="rname">Presentation Rubric</div>
+        <div class="rdesc">Exactly what the Final Presentation is graded on.</div>
+      </a>
+      <a class="res" href="capstone/capstone-peer-feedback.html">
+        <div class="rname">Peer Feedback Form</div>
+        <div class="rdesc">Rate your teammates' contribution - feeds the individual-grade scaling.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= POLICIES ================= -->
+<section id="policies">
+  <div class="wrap">
+    <p class="kicker">The Fine Print, Digested</p>
+    <h2>Policies You'll Actually Ask About</h2>
+    <p class="sub">The full versions live in the course outline and syllabus on Canvas - this is the quick reference.</p>
+    <div class="pol-grid">
+      <div class="pol">
+        <h3>Late work</h3>
+        <ul>
+          <li><strong>Labs, quizzes, and the capstone proposal</strong> lose <strong>15% per calendar day late</strong> (grade floor of 0).</li>
+          <li><strong>Capstone final deliverables are not accepted late:</strong> the Final Report wiki, the GitHub repository, the GitHub Project board, and the Final Presentation earn a zero for that component if not delivered on time.</li>
+          <li>Documented emergency? Contact Dr. Parra <strong>before</strong> the deadline - accommodations are case by case at the instructor's discretion.</li>
+        </ul>
+      </div>
+      <div class="pol">
+        <h3>Attendance</h3>
+        <ul>
+          <li>Attendance is mandatory and worth <strong>10%</strong>. Up to <strong>3 absences</strong> without penalty, excused or not. The <strong>4th absence forfeits</strong> the entire 10%.</li>
+          <li>Arriving <strong>10+ minutes late</strong> counts as tardy; <strong>3 tardies = 1 unexcused absence</strong>.</li>
+          <li>Planned university/religious/military absences: written notice at least two weeks ahead, and they still count toward the three. Four or more absences without officially dropping results in a failing grade per university policy.</li>
+        </ul>
+      </div>
+      <div class="pol">
+        <h3>Academic integrity</h3>
+        <p>Highest standards of academic honesty apply. Cheating and plagiarism are handled per the <a href="https://my.uiw.edu/student-advocacy-and-accountability/student-accountability/student-handbook.html" target="_blank" rel="noopener">UIW Student Handbook</a> (Section 5, Part D). In a course about security, integrity <em>is</em> the discipline - your capstone commit history leaves an audit trail, and so do you.</p>
+      </div>
+      <div class="pol">
+        <h3>This outline is a guideline</h3>
+        <p>The schedule and procedures may change under extenuating circumstances or when it benefits the class. Prominent changes are announced through <strong>Canvas Announcements</strong> - check it and your university email regularly; that's the official channel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="https://my.uiw.edu/student-advocacy-and-accountability/student-accountability/student-handbook.html" target="_blank" rel="noopener">UIW Student Handbook</a>
+      <a href="https://www.uiw.edu/sds/" target="_blank" rel="noopener">Student Disability Services</a>
+      <a href="https://www.uiw.edu/titleix/" target="_blank" rel="noopener">Title IX (Non-Discrimination)</a>
+    </div>
+    <p>CIS 3353-01 · Computer Systems Security · Fall 2026 · University of the Incarnate Word · School of Mathematics, Science and Engineering - Dept. of Engineering, Computing, and Cybersecurity.<br>
+    Dr. Gonzalo D Parra · <a href="mailto:gdparra@uiwtx.edu">gdparra@uiwtx.edu</a> · Founders Hall G009 · (210) 829-3146. Students seeking disability or pregnancy accommodations should contact Student Disability Services.</p>
+  </div>
+</footer>
+
+<script>
+/*__CORE_START__*/
+"use strict";
+
+/* ---- Fall 2026 session data (authoritative, from the course outline) ---- */
+var SESSIONS = [
+  {wk:1,  date:"2026-08-24", day:"Mon", topic:"Introduction to the Course", note:"Syllabus review · MindTap setup", tags:["lecture"]},
+  {wk:1,  date:"2026-08-26", day:"Wed", topic:"Module 1: Introduction to Information Security", note:"", tags:["lecture"]},
+  {wk:2,  date:"2026-08-31", day:"Mon", topic:"Module 2: Pervasive Attack Surfaces", note:"", tags:["lecture"]},
+  {wk:2,  date:"2026-09-02", day:"Wed", topic:"Module 2: Attack Controls", note:"", tags:["lecture"]},
+  {wk:3,  date:"2026-09-07", day:"Mon", topic:"No class - Labor Day (UIW closed)", note:"", tags:["noclass"]},
+  {wk:3,  date:"2026-09-09", day:"Wed", topic:"Module 3: Fundamentals of Cryptography", note:"", tags:["lecture"]},
+  {wk:4,  date:"2026-09-14", day:"Mon", topic:"Module 3: Cryptography (Cont.)", note:"Census day", tags:["lecture"]},
+  {wk:4,  date:"2026-09-16", day:"Wed", topic:"Module 4: Advanced Cryptography", note:"Capstone teams + proposal due", tags:["lecture","capstone"]},
+  {wk:5,  date:"2026-09-21", day:"Mon", topic:"Group Project Day", note:"Capstone team coordination with the instructor", tags:["gpday"]},
+  {wk:5,  date:"2026-09-23", day:"Wed", topic:"Module 5: Endpoint Vulnerabilities", note:"", tags:["lecture"]},
+  {wk:6,  date:"2026-09-28", day:"Mon", topic:"Module 5: Attacks and Defenses", note:"", tags:["lecture"]},
+  {wk:6,  date:"2026-09-30", day:"Wed", topic:"Module 6: Mobile Device Security", note:"", tags:["lecture"]},
+  {wk:7,  date:"2026-10-05", day:"Mon", topic:"Module 6: Embedded Device Security", note:"", tags:["lecture"]},
+  {wk:7,  date:"2026-10-07", day:"Wed", topic:"Module 7: Identity and Access Management (IAM)", note:"", tags:["lecture"]},
+  {wk:8,  date:"2026-10-12", day:"Mon", topic:"Module 7: IAM (Cont.)", note:"", tags:["lecture"]},
+  {wk:8,  date:"2026-10-14", day:"Wed", topic:"Group Project Day", note:"Capstone team coordination with the instructor", tags:["gpday"]},
+  {wk:9,  date:"2026-10-19", day:"Mon", topic:"Module 7: IAM (Cont.)", note:"", tags:["lecture"]},
+  {wk:9,  date:"2026-10-21", day:"Wed", topic:"Module 8: Infrastructure Threats", note:"", tags:["lecture"]},
+  {wk:10, date:"2026-10-26", day:"Mon", topic:"Module 8: Security Monitoring", note:"", tags:["lecture"]},
+  {wk:10, date:"2026-10-28", day:"Wed", topic:"Module 9: Infrastructure Security", note:"", tags:["lecture"]},
+  {wk:11, date:"2026-11-02", day:"Mon", topic:"Module 9: Infrastructure Security (Cont.)", note:"", tags:["lecture"]},
+  {wk:11, date:"2026-11-04", day:"Wed", topic:"Module 10: Wireless Network Attacks", note:"", tags:["lecture"]},
+  {wk:12, date:"2026-11-09", day:"Mon", topic:"Module 10: Wireless Defenses", note:"", tags:["lecture"]},
+  {wk:12, date:"2026-11-11", day:"Wed", topic:"Group Project Day", note:"Capstone team coordination with the instructor", tags:["gpday"]},
+  {wk:13, date:"2026-11-16", day:"Mon", topic:"Module 10: Wireless Security (Cont.)", note:"Last day to drop", tags:["lecture"]},
+  {wk:13, date:"2026-11-18", day:"Wed", topic:"Final Project Prep", note:"", tags:["lecture"]},
+  {wk:14, date:"2026-11-23", day:"Mon", topic:"Group Project Day", note:"Capstone team coordination with the instructor", tags:["gpday"]},
+  {wk:14, date:"2026-11-25", day:"Wed", topic:"No class - Thanksgiving break", note:"", tags:["noclass"]},
+  {wk:15, date:"2026-11-30", day:"Mon", topic:"Capstone Project Presentations (Day 1)", note:"Present in your scheduled slot", tags:["capstone"]},
+  {wk:15, date:"2026-12-02", day:"Wed", topic:"Capstone Project Presentations (Day 2)", note:"Present in your scheduled slot", tags:["capstone"]},
+  {wk:16, date:"2026-12-07", endDate:"2026-12-11", day:"Mon–Fri", topic:"Finals week - no exam; capstone final deliverables due", note:"Wiki final report, repo, and board due per Canvas", tags:["capstone"]}
+];
+
+var TERM_START = "2026-08-24"; // first day of class (a Monday)
+var LAST_WEEK  = 16;           // finals week
+
+/* ---- pure date helpers (local-time, date-only) ---- */
+function parseISO(s){
+  var p = s.split("-");
+  return new Date(+p[0], +p[1]-1, +p[2]); // local midnight
+}
+function toISO(d){
+  var m = d.getMonth()+1, day = d.getDate();
+  return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(day<10?"0":"")+day;
+}
+function mondayOf(d){
+  var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate() - ((x.getDay()+6)%7)); // Mon=0 … Sun=6
+  return x;
+}
+function addDays(d,n){
+  var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  x.setDate(x.getDate()+n);
+  return x;
+}
+function diffDays(a,b){ // whole days from b to a (DST-safe via rounding)
+  return Math.round((a.getTime()-b.getTime())/864e5);
+}
+
+/* ---- the pure "this week" state machine ---- */
+function computeWeekState(todayISO){
+  var today = parseISO(todayISO);
+  var start = parseISO(TERM_START);
+
+  if (today < start){
+    return { phase:"pre", daysUntil: diffDays(start, today) };
+  }
+
+  var mon = mondayOf(today);
+  var sun = addDays(mon, 6);
+  var week = Math.round(diffDays(mon, mondayOf(start))/7) + 1;
+
+  if (week > LAST_WEEK){
+    return { phase:"post" };
+  }
+
+  var sessions = SESSIONS.filter(function(s){
+    var a = parseISO(s.date);
+    var b = s.endDate ? parseISO(s.endDate) : a;
+    return b >= mon && a <= sun;
+  });
+
+  return {
+    phase: week === LAST_WEEK ? "finals" : "term",
+    week: week,
+    weekStartISO: toISO(mon),
+    weekEndISO: toISO(sun),
+    todayISO: todayISO,
+    sessions: sessions
+  };
+}
+/*__CORE_END__*/
+
+/* ---- rendering ---- */
+var TAG_LABEL = {gpday:"Group Project Day", capstone:"Capstone", noclass:"No class"};
+var TAG_CLASS = {gpday:"b-milestone", capstone:"b-capstone", noclass:"b-noclass"};
+
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function badges(tags){
+  return tags.filter(function(t){return t!=="lecture";}).map(function(t){
+    return '<span class="badge '+TAG_CLASS[t]+'">'+TAG_LABEL[t]+'</span>';
+  }).join("");
+}
+function fmtHuman(iso){
+  var d = parseISO(iso);
+  var M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return M[d.getMonth()]+" "+d.getDate();
+}
+
+function renderSchedule(state){
+  var body = document.getElementById("sched-body");
+  var html = "";
+  SESSIONS.forEach(function(s, i){
+    var cls = [];
+    if (s.tags.indexOf("noclass") !== -1) cls.push("noclass");
+    var isCurrent = false, isToday = false;
+    if (state.phase==="term" || state.phase==="finals"){
+      var a = parseISO(s.date), b = s.endDate ? parseISO(s.endDate) : a;
+      var mon = parseISO(state.weekStartISO), sun = parseISO(state.weekEndISO);
+      isCurrent = (b >= mon && a <= sun);
+      var t = parseISO(state.todayISO);
+      isToday = (t >= a && t <= b);
+    }
+    if (isCurrent) cls.push("current-week");
+    if (isToday) cls.push("is-today");
+    var dateLabel = s.endDate
+      ? fmtHuman(s.date)+"–"+parseISO(s.endDate).getDate()
+      : s.day+" "+fmtHuman(s.date);
+    html += '<tr class="'+cls.join(" ")+'" data-tags="'+s.tags.join(" ")+'" data-idx="'+i+'">'
+      + '<td class="wk">'+s.wk+'</td>'
+      + '<td class="date">'+esc(dateLabel)+(isToday?'<span class="now-tag">Today</span>':"")+'</td>'
+      + '<td><span class="topic">'+esc(s.topic)+'</span></td>'
+      + '<td>'+(s.note?esc(s.note)+" ":"")+badges(s.tags)+'</td>'
+      + '</tr>';
+  });
+  body.innerHTML = html;
+}
+
+function renderThisWeek(state){
+  var card = document.getElementById("tw-card");
+  var html = "";
+  if (state.phase === "pre"){
+    var n = state.daysUntil;
+    html = '<div class="countdown">'
+      + '<div><div class="num">'+n+'</div><div style="font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)">day'+(n===1?"":"s")+' to go</div></div>'
+      + '<div class="cap"><strong>First class: Monday, August 24, 2026</strong> - 3:00 PM, Founders Hall G008.<br>'
+      + 'Get ahead: make sure you can log in to Canvas and set up your Cengage MindTap access. Syllabus review and MindTap setup happen on day one.</div>'
+      + '</div>';
+  } else if (state.phase === "post"){
+    html = '<div class="tw-head"><span class="big">That\'s a wrap.</span></div>'
+      + '<p style="margin:0;font-size:.95rem">The Fall 2026 semester is complete. Final grades post to Canvas per the registrar\'s calendar. '
+      + 'This course prepares you for the optional <strong>CompTIA Security+ (SY0-701)</strong> exam. Great work this semester.</p>';
+  } else {
+    var isFinals = state.phase === "finals";
+    html = '<div class="tw-head">'
+      + '<span class="big">'+(isFinals?"Finals Week":"Week "+state.week+" of 16")+'</span>'
+      + '<span class="range">'+fmtHuman(state.weekStartISO)+' – '+fmtHuman(state.weekEndISO)+'</span>'
+      + '</div>';
+    html += '<div class="tw-sessions">';
+    state.sessions.forEach(function(s){
+      var a = parseISO(s.date), b = s.endDate ? parseISO(s.endDate) : a;
+      var t = parseISO(state.todayISO);
+      var isToday = (t >= a && t <= b);
+      var noclass = s.tags.indexOf("noclass") !== -1;
+      html += '<div class="tw-session'+(isToday?" is-today":"")+(noclass?" noclass":"")+'">'
+        + '<div class="d">'+esc(s.day)+' · '+fmtHuman(s.date)+(s.endDate?"–"+parseISO(s.endDate).getDate():"")+(isToday?" - today":"")+'</div>'
+        + '<div class="t">'+esc(s.topic)+'</div>'
+        + (s.note?'<div style="font-size:.85rem;color:var(--muted)">'+esc(s.note)+'</div>':"")
+        + badges(s.tags)
+        + '</div>';
+    });
+    html += '</div>';
+    if (isFinals){
+      html += '<div class="tw-note">There is no final exam in this course. Your capstone final deliverables (Wiki final report, repository, and Project board) are due this week per Canvas - and final deliverables are not accepted late.</div>';
+    } else {
+      html += '<div class="tw-note">Class meets Mon &amp; Wed 3:00–4:15 PM in Founders Hall G008 · Office hours Mon–Thu 1:30–3:00 PM in Founders Hall G009, scheduled meeting required: book through the Microsoft Bookings link.</div>';
+    }
+  }
+  card.innerHTML = html;
+}
+
+/* ---- filtering ---- */
+function initFilters(){
+  var chips = document.querySelectorAll("#filters .chip");
+  chips.forEach(function(chip){
+    chip.addEventListener("click", function(){
+      chips.forEach(function(c){ c.classList.remove("active"); });
+      chip.classList.add("active");
+      var f = chip.getAttribute("data-filter");
+      var rows = document.querySelectorAll("#sched-body tr");
+      var visible = 0;
+      rows.forEach(function(r){
+        var tags = r.getAttribute("data-tags").split(" ");
+        var show = (f === "all") || tags.indexOf(f) !== -1;
+        r.classList.toggle("hidden-row", !show);
+        if (show) visible++;
+      });
+      document.getElementById("sched-empty").style.display = visible ? "none" : "block";
+    });
+  });
+}
+
+/* ---- boot ---- */
+(function(){
+  var now = new Date();
+  var todayISO = toISO(now);
+  var state = computeWeekState(todayISO);
+  renderThisWeek(state);
+  renderSchedule(state);
+  initFilters();
+})();
+</script>
+<script>document.addEventListener("keydown",function(e){if(e.key==="p"&&!e.ctrlKey&&!e.metaKey&&!e.altKey){var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return;e.preventDefault();window.print();}});</script>
+<button class="theme-fab" id="themeFab" type="button">Theme</button>
+<script>
+(function(){
+  try{var t=localStorage.getItem("csec-theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}
+  document.getElementById("themeFab").addEventListener("click",function(){
+    var r=document.documentElement;
+    var cur=r.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+    var next=cur==="dark"?"light":"dark";
+    r.setAttribute("data-theme",next);
+    try{localStorage.setItem("csec-theme",next);}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

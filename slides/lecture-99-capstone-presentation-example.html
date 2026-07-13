@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CIS 3353 Computer Systems Security - Session 99: SecureDesk: a small-business network with a DMZ and an IDS</title>
+<style>
+:root{
+  --slate:#222222; --slate2:#2b2b2e; --panel:#2c2f34; --panel2:#333;
+  --ink:#f4f4f4; --muted:#b9bcc2; --line:#41444b;
+  --red:#cb333b; --red-dk:#89191c; --red-lt:#e8565f;
+  --grn:#7be39a; --amb:#e2a04a;
+  --mono:"JetBrains Mono","DejaVu Sans Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#111;color:var(--ink);font-family:var(--sans)}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#0c0c0d}
+#deck{width:1280px;height:720px;position:relative;transform-origin:center center;background:var(--slate)}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;padding:54px 64px 48px;background:var(--slate)}
+.slide.active{display:flex}
+.slide.s-title,.slide.s-section{align-items:flex-start;justify-content:center}
+/* accent rails */
+#deck::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:var(--red);z-index:5}
+.s-title{background:linear-gradient(135deg,#232326,#1a1a1c)}
+.title-band{border-left:8px solid var(--red);padding:8px 0 8px 28px}
+.title-kicker{color:var(--red-lt);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:20px}
+.title-main{font-size:52px;line-height:1.08;margin:14px 0 18px;font-weight:800}
+.title-meta{font-size:22px;color:var(--ink);font-weight:600}
+.title-sub{font-size:17px;color:var(--muted);margin-top:8px}
+.s-title .s-num{display:none}
+/* section divider slides */
+.s-section .s-title{color:#fff}
+.s-section{background:linear-gradient(135deg,#2a1a1b,#1a1a1c)}
+.s-section .s-body{font-size:40px;font-weight:800;border-left:8px solid var(--red);padding-left:28px}
+/* headers */
+.s-title.s-title{}
+h1.s-title{font-size:34px;margin:0 0 18px;font-weight:800;color:#fff;border-bottom:3px solid var(--red);padding-bottom:12px}
+.s-body{flex:1;font-size:23px;line-height:1.4;overflow:hidden;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.s-content .s-body,.s-steps .s-body,.s-demo .s-body,.s-activity .s-body{justify-content:flex-start}
+.lead{color:var(--muted);font-size:21px;margin:0 0 6px}
+ul,ol{margin:4px 0;padding-left:30px}
+li{margin:8px 0}
+li.sub{list-style:circle;color:var(--muted);font-size:20px}
+strong{color:#fff}
+em{color:var(--red-lt);font-style:normal;font-weight:600}
+code{font-family:var(--mono);background:#15161a;color:#ffd9b0;padding:2px 7px;border-radius:5px;font-size:.9em}
+p{margin:6px 0}
+/* objectives */
+ol.objectives li,ol.steps li{margin:12px 0}
+/* step cards */
+ol.steps{list-style:none;padding:0;counter-reset:none}
+ol.steps li{display:flex;gap:16px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:12px 16px}
+.step-n{flex:none;width:34px;height:34px;border-radius:8px;background:var(--red);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px}
+.step-t{padding-top:4px}
+/* callouts */
+.callout{display:flex;gap:12px;align-items:flex-start;border-radius:10px;padding:12px 16px;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--red);font-size:20px}
+.callout .c-label{flex:none;font-weight:800;text-transform:uppercase;letter-spacing:.04em;font-size:13px;padding-top:3px}
+.c-def{border-left-color:var(--red)} .c-def .c-label{color:var(--red-lt)}
+.c-note{border-left-color:#5a8fd6} .c-note .c-label{color:#8fb8ea}
+.c-warn{border-left-color:var(--amb)} .c-warn .c-label{color:var(--amb)}
+.c-tip{border-left-color:var(--grn)} .c-tip .c-label{color:var(--grn)}
+.c-analogy{border-left-color:#b48ad9} .c-analogy .c-label{color:#c6a6e6}
+.c-why{border-left-color:var(--red-lt)} .c-why .c-label{color:var(--red-lt)}
+/* terminal */
+.term{background:#0f1013;border:1px solid #33353c;border-radius:10px;overflow:hidden;font-family:var(--mono);font-size:18px;margin:4px 0}
+.term-title{background:#191b20;color:var(--muted);padding:6px 14px;font-family:var(--sans);font-size:14px;border-bottom:1px solid #2a2c33}
+.term-body{padding:12px 16px;line-height:1.5}
+.t-line{white-space:pre-wrap;word-break:break-word}
+.t-in{color:#eaeaea}
+.t-prompt{color:var(--red-lt);font-weight:700;user-select:none}
+.t-cmd{color:#7fd1ff;font-weight:700}
+.t-args{color:#ffd9b0}
+.t-ann{color:#6f7681;font-style:italic;margin-left:10px}
+.t-out{color:#9fa6b0}
+/* code block */
+pre.code{background:#0f1013;border:1px solid #33353c;border-radius:10px;padding:12px 16px;font-family:var(--mono);font-size:17px;color:#d8dee9;overflow:auto;margin:4px 0}
+/* diagrams */
+.diagram-wrap{display:flex;justify-content:center;align-items:center;flex:1;min-height:0}
+.diagram-wrap svg{max-width:100%;max-height:440px;height:auto}
+.diagram-wrap figure{margin:0;text-align:center}
+.diagram-wrap figcaption{color:var(--muted);font-size:16px;margin-top:6px;font-family:var(--sans)}
+.diag-err{color:var(--amb);border:1px dashed var(--amb);padding:10px;border-radius:8px;font-family:var(--mono);font-size:15px}
+/* footer + slide number */
+.s-foot{position:absolute;left:64px;right:64px;bottom:16px;display:flex;justify-content:space-between;color:#6f7681;font-size:13px;border-top:1px solid var(--line);padding-top:8px}
+.s-num{position:absolute;right:22px;bottom:14px;color:#6f7681;font-size:13px;font-weight:700}
+.tag{position:absolute;right:64px;top:20px;color:var(--muted);font-size:13px}
+/* progress bar */
+#prog{position:fixed;top:0;left:0;height:5px;background:var(--red);z-index:50;transition:width .2s}
+/* HUD */
+#hud{position:fixed;bottom:10px;left:12px;color:#666;font-size:12px;font-family:var(--mono);z-index:40;user-select:none}
+/* speaker notes */
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:38vh;overflow:auto;background:#0b0b0cee;border-top:3px solid var(--red);
+  color:#e6e6e6;padding:16px 22px;font-size:16px;line-height:1.5;display:none;z-index:45;white-space:pre-wrap}
+#notes.show{display:block}
+#notes h3{margin:0 0 8px;color:var(--red-lt);font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+/* grid overview */
+#grid{position:fixed;inset:0;background:#0c0c0dfa;z-index:60;display:none;grid-template-columns:repeat(4,1fr);gap:12px;padding:24px;overflow:auto}
+#grid.show{display:grid}
+#grid .g{border:1px solid var(--line);border-radius:8px;background:var(--slate);padding:10px;cursor:pointer;height:150px;overflow:hidden;position:relative}
+#grid .g:hover{border-color:var(--red)}
+#grid .g .gt{font-size:12px;color:var(--muted)}
+#grid .g .gh{font-size:15px;font-weight:700;margin-top:6px}
+#grid .g .gn{position:absolute;right:8px;bottom:6px;color:#666;font-size:11px}
+/* print: one slide per page */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff;height:auto}
+  #stage{position:static;display:block;overflow:visible}
+  #deck{transform:none!important;width:1280px;height:auto}
+  #prog,#hud,#notes,#grid{display:none!important}
+  .slide{position:relative;display:flex!important;inset:auto;width:1280px;height:720px;page-break-after:always;break-after:page}
+  #deck::before{position:absolute}
+}
+</style></head>
+<body>
+<div id="prog"></div>
+<div id="stage"><div id="deck">
+<section class="slide s-title" data-index="1"><div class="title-band"><div class="title-kicker">CIS 3353 Computer Systems Security</div><h1 class="title-main">SecureDesk: a small-business network with a DMZ and an IDS</h1><div class="title-meta">Session 99 &nbsp;·&nbsp; Capstone Final Presentation (worked example)</div><div class="title-sub">Outcomes: CO1, CO4, CO5, CO6 &nbsp;·&nbsp; Dr. Gonzalo D Parra</div></div><div class="s-num">1</div></section>
+<section class="slide s-content" data-index="2"><h1 class="s-title">Team and Project</h1><div class="s-body"><ul>
+<li><strong>Project:</strong> SecureDesk, a segmented small-business network with a DMZ and an intrusion detection system</li>
+<li><strong>Team Member 1:</strong> Alice (network and firewall, owned the pfSense zones)</li>
+<li><strong>Team Member 2:</strong> Bob (attack simulation and IDS, owned Kali and Snort)</li>
+<li><strong>Team Member 3:</strong> Carol (wireless and documentation, owned WPA3 and the wiki)</li>
+<li><strong>Professor:</strong> Dr. Gonzalo D Parra</li>
+<li>CIS 3353 Computer Systems Security, University of the Incarnate Word</li>
+</ul>
+<div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Capstone teams are 2 to 3 students. If your team is two, use two roster lines. This slide is where the audience learns who owns what before you start.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">2</div></section>
+<section class="slide s-content" data-index="3"><h1 class="s-title">Outline</h1><div class="s-body"><ul>
+<li>Motivation</li>
+<li>Objective</li>
+<li>Milestones and User Stories</li>
+<li>Build, Attack, and Defend</li>
+<li>Prototype and Demo</li>
+<li>Challenges and Limitations</li>
+<li>Future Work</li>
+<li>Conclusion</li>
+<li>References</li>
+</ul>
+<div class="callout c-tip"><span class="c-label">Tip</span><span class="c-body">Show the outline for about fifteen seconds, then move. The audience uses it as a map, not as a reading assignment.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">3</div></section>
+<section class="slide s-content" data-index="4"><h1 class="s-title">Motivation</h1><div class="s-body"><ul>
+<li><strong>Why it matters:</strong> a small accounting business runs a public client portal on the same flat network as the workstations that hold tax records. One compromised web server would expose everything.</li>
+<li><strong>Who benefits:</strong> the owner who must protect client data, and the staff who need the portal to stay online.</li>
+<li><strong>Current landscape:</strong> many small offices run a single flat LAN with a consumer router and no monitoring, so an attacker who lands anywhere can reach everything.</li>
+<li><strong>The gap:</strong> the business has no network segmentation, no intrusion detection, and no hardened wireless. That gap is what SecureDesk closes.</li>
+</ul></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">4</div></section>
+<section class="slide s-content" data-index="5"><h1 class="s-title">Objective</h1><div class="s-body"><ul>
+<li>Segment the network into WAN, DMZ, and LAN zones on pfSense so a compromised portal cannot reach the internal workstations.</li>
+<li>Detect intrusions with a Snort IDS watching perimeter traffic, and harden wireless with WPA3-Enterprise.</li>
+<li>Prove the design by demonstrating a real attack against the flat network, then showing the same attack blocked and alerted after the defenses are in place.</li>
+<li><strong>Modules integrated (three required, four used):</strong> Module 2 Pervasive Attack Surfaces and Controls, Module 8 Infrastructure Threats and Security Monitoring, Module 9 Infrastructure Security, and Module 10 Wireless Network Attacks and Defenses.</li>
+</ul></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">5</div></section>
+<section class="slide s-content" data-index="6"><h1 class="s-title">Milestones Overview</h1><div class="s-body"><ul>
+<li><strong>Proposal approved:</strong> organization scenario, threat, and target defenses signed off by the instructor.</li>
+<li><strong>Milestone 2, Environment built:</strong> pfSense zones, the DMZ web portal, and the Kali attacker running; the flat-network attack demonstrated.</li>
+<li><strong>Milestone 3, Defenses implemented and verified:</strong> DMZ-to-LAN blocked, Snort alerting, WPA3-Enterprise up, each verified by a test.</li>
+<li><strong>Presentation and final submission:</strong> hardened build, wiki report, recorded demo, and a clean board.</li>
+</ul>
+<div class="callout c-warn"><span class="c-label">Watch out</span><span class="c-body">Milestones and user stories on these slides MUST match the GitHub repository exactly. Each member presents only the user stories they personally contributed to.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">6</div></section>
+<section class="slide s-content" data-index="7"><h1 class="s-title">Milestone 2, Build - User Stories</h1><div class="s-body"><ul>
+<li>Present each story as a row: User Story, Assigned To, Committed By, Status. The member who owns the row is the member who speaks to it.</li>
+</ul>
+<p>| User Story | Assigned To | Committed By | Status |</p>
+<p>| --- | --- | --- | --- |</p>
+<p>| US-1 Three zones on pfSense (WAN, DMZ, LAN) | Alice | Alice | Done |</p>
+<p>| US-2 Ubuntu web portal deployed in the DMZ | Carol | Carol | Done |</p>
+<p>| US-3 Kali attacker on the WAN segment | Bob | Bob | Done |</p>
+<div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Assigned To is who was assigned on the board; Committed By is who pushed the work. Under Individual Commits these must match for you to earn the points.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">7</div></section>
+<section class="slide s-content" data-index="8"><h1 class="s-title">Milestone 2, Build - Evidence</h1><div class="s-body"><ul>
+<li>Evidence lives here: screenshots, terminal output, and commit hashes that prove each story is real.</li>
+<li><strong>US-1:</strong> pfSense interface assignment screenshot showing three interfaces (WAN, DMZ, LAN), committed as <code>7c4f9a2</code> on <code>main</code>.</li>
+<li><strong>US-2:</strong> <code>curl</code> output of the portal reachable from the DMZ, next to the compose file, committed as <code>b3e81d0</code>.</li>
+<li><strong>US-3:</strong> <code>ip addr</code> output on Kali confirming it sits on the WAN segment, committed as <code>9f2a5c6</code>.</li>
+</ul>
+<div class="callout c-tip"><span class="c-label">Tip</span><span class="c-body">Every claim you make out loud should have a matching artifact on the slide or one click away in the repo. No artifact, no credit.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">8</div></section>
+<section class="slide s-diagram" data-index="9"><h1 class="s-title">System Architecture</h1><div class="s-body"><ul>
+<li>One picture of the built network, matching what we actually deployed.</li>
+</ul>
+<div class="diagram-wrap"><figure class="diagram"><svg viewBox="0 0 662 422" width="662" height="422" xmlns="http://www.w3.org/2000/svg" role="img" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace"><defs><marker id="ah" markerWidth="11" markerHeight="9" refX="9" refY="4.5" orient="auto-start-reverse"><path d="M0,0 L11,4.5 L0,9 z" fill="#c9ccd1"/></marker><marker id="ahs" markerWidth="11" markerHeight="9" refX="9" refY="4.5" orient="auto-start-reverse"><path d="M0,0 L11,4.5 L0,9 z" fill="#cb333b"/></marker></defs><text x="22" y="24" fill="#e8565f" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="13" font-weight="700">SecureDesk network zones</text><rect x="438" y="64" width="190" height="92" rx="12" fill="#2a1c1e" fill-opacity="0.45" stroke="#cb333b" stroke-width="1.6" stroke-dasharray="8 6"/><rect x="438" y="296" width="190" height="92" rx="12" fill="#2a1c1e" fill-opacity="0.45" stroke="#cb333b" stroke-width="1.6" stroke-dasharray="8 6"/><path d="M 195.0 226.0 L 236.0 226.0" fill="none" stroke="#c9ccd1" stroke-width="3" marker-end="url(#ah)"/><path d="M 405.0 226.0 L 418.5 226.0 L 418.5 110.0 L 446.0 110.0" fill="none" stroke="#c9ccd1" stroke-width="3" marker-end="url(#ah)"/><path d="M 405.0 226.0 L 432.5 226.0 L 432.5 342.0 L 446.0 342.0" fill="none" stroke="#f4a0a6" stroke-width="3" marker-end="url(#ah_f4a0a6)"/><path d="M 323.0 259.0 L 323.0 304.0" fill="none" stroke="#c9ccd1" stroke-width="3" marker-end="url(#ah)"/><rect x="34.0" y="196.0" width="158" height="60" rx="9" fill="#2c2f34" stroke="#a8acb3" stroke-width="2" stroke-dasharray="7 5"/><text x="113.0" y="231.0" fill="#a8acb3" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="13" font-weight="600" text-anchor="middle">Kali attacker</text><rect x="244.0" y="196.0" width="158" height="60" rx="9" fill="#2c2f34" stroke="#f4f4f4" stroke-width="2"/><text x="323.0" y="231.0" fill="#f4f4f4" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="13" font-weight="600" text-anchor="middle">pfSense</text><rect x="244.0" y="312.0" width="158" height="60" rx="9" fill="#2c2f34" stroke="#f4f4f4" stroke-width="2"/><text x="323.0" y="347.0" fill="#f4f4f4" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="13" font-weight="600" text-anchor="middle">Snort IDS</text><rect x="454.0" y="80.0" width="158" height="60" rx="9" fill="#2c2f34" stroke="#f4f4f4" stroke-width="2"/><text x="533.0" y="115.0" fill="#f4f4f4" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="13" font-weight="600" text-anchor="middle">Web portal</text><path d="M 454.0 320.0 A 79.0 8 0 0 1 612.0 320.0 L 612.0 364.0 A 79.0 8 0 0 1 454.0 364.0 Z" fill="#2c2f34" stroke="#f4f4f4" stroke-width="2"/><path d="M 454.0 320.0 A 79.0 8 0 0 0 612.0 320.0" fill="none" stroke="#f4f4f4" stroke-width="2"/><text x="533.0" y="354.0" fill="#f4f4f4" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="13" font-weight="600" text-anchor="middle">LAN host</text><rect x="201" y="216" width="30" height="19" rx="4" fill="#0d0e10" stroke="#5a3034" stroke-width="0.8"/><text x="215.5" y="229.5" fill="#a8acb3" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="10.5" font-weight="400" text-anchor="middle">WAN</text><rect x="404" y="158" width="30" height="19" rx="4" fill="#0d0e10" stroke="#5a3034" stroke-width="0.8"/><text x="418.5" y="171.5" fill="#a8acb3" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="10.5" font-weight="400" text-anchor="middle">DMZ</text><rect x="418" y="274" width="30" height="19" rx="4" fill="#0d0e10" stroke="#5a3034" stroke-width="0.8"/><text x="432.5" y="287.5" fill="#a8acb3" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="10.5" font-weight="400" text-anchor="middle">LAN</text><rect x="326" y="272" width="50" height="19" rx="4" fill="#0d0e10" stroke="#5a3034" stroke-width="0.8"/><text x="350.8" y="285.0" fill="#a8acb3" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="10.5" font-weight="400" text-anchor="middle">mirror</text><rect x="452" y="55" width="71" height="18" rx="5" fill="#0d0e10" stroke="#cb333b" stroke-width="1"/><text x="487.6" y="68.0" fill="#cb333b" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="10.5" font-weight="700" text-anchor="middle">DMZ zone</text><rect x="452" y="287" width="71" height="18" rx="5" fill="#0d0e10" stroke="#cb333b" stroke-width="1"/><text x="487.6" y="300.0" fill="#cb333b" font-family="'JetBrains Mono','DejaVu Sans Mono',ui-monospace,Menlo,monospace" font-size="10.5" font-weight="700" text-anchor="middle">LAN zone</text></svg><figcaption>Traffic from the WAN hits pfSense, which routes the DMZ and LAN separately; Snort watches a mirror of perimeter traffic.</figcaption></figure></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">9</div></section>
+<section class="slide s-content" data-index="10"><h1 class="s-title">Attack Demonstration, Before Defenses</h1><div class="s-body"><ul>
+<li>On the flat network (before segmentation), we showed the threat working end to end.</li>
+<li><strong>Port scan:</strong> from Kali, <code>nmap</code> found the web portal and an open management port. Command: <code>nmap -sV 10.10.10.20</code>.</li>
+<li><strong>Pivot attempt:</strong> from the compromised portal host, we reached a LAN workstation because nothing separated the zones. Command: <code>nc -zv 10.10.20.10 445</code>.</li>
+<li>The pivot succeeded, proving a single web compromise exposed the internal records. This is the risk SecureDesk removes.</li>
+</ul>
+<div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Showing the attack succeed against the undefended build is required. If the graders never saw it break, they cannot see that you fixed it.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">10</div></section>
+<section class="slide s-content" data-index="11"><h1 class="s-title">Attack - Evidence</h1><div class="s-body"><ul>
+<li><strong>Mocked example 1:</strong> <code>nmap</code> output listing the open management port on the portal, captured on the flat network, committed as <code>d0c4e17</code>.</li>
+<li><strong>Mocked example 2:</strong> <code>nc</code> output showing a successful connection from the DMZ host to a LAN workstation on port 445, committed as <code>3ab77f1</code>.</li>
+</ul>
+<div class="callout c-tip"><span class="c-label">Tip</span><span class="c-body">Show a before and after. "The pivot connected here; here is the commit and the later test where it is refused" is the strongest evidence pattern.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">11</div></section>
+<section class="slide s-content" data-index="12"><h1 class="s-title">Milestone 3, Defend - User Stories</h1><div class="s-body"><p>| User Story | Assigned To | Committed By | Status |</p>
+<p>| --- | --- | --- | --- |</p>
+<p>| US-4 Firewall rules block DMZ to LAN | Alice | Alice | Done |</p>
+<p>| US-5 Snort IDS alerts on the port scan | Bob | Bob | Done |</p>
+<p>| US-6 WPA3-Enterprise wireless for staff | Carol | Carol | Done |</p>
+<div class="callout c-note"><span class="c-label">Note</span><span class="c-body">The member who owns each row is the member who speaks to it. Do not narrate a teammate's story.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">12</div></section>
+<section class="slide s-content" data-index="13"><h1 class="s-title">Defend - Verification Evidence</h1><div class="s-body"><ul>
+<li><strong>US-4, DMZ to LAN blocked:</strong> the same <code>nc -zv 10.10.20.10 445</code> from the DMZ now times out; pfSense firewall log shows the drop. Rule and log committed as <code>c8d4f0a</code>.</li>
+<li><strong>US-5, Snort alerts:</strong> rerunning the <code>nmap</code> scan fires Snort alert "SCAN nmap detected" in the console. Rule and alert screenshot committed as <code>6e2b9d3</code>.</li>
+<li><strong>US-6, WPA3-Enterprise:</strong> the wireless client authenticates over WPA3-Enterprise; a capture shows the association uses WPA3, not WPA2. Config and capture committed as <code>f0a19c4</code>.</li>
+</ul>
+<div class="callout c-warn"><span class="c-label">Watch out</span><span class="c-body">The final wiki, repo, and board are due at the posted deadline on Canvas. No late work is accepted.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">13</div></section>
+<section class="slide s-content" data-index="14"><h1 class="s-title">Prototype and Demo</h1><div class="s-body"><ul>
+<li>The prototype is the running network: pfSense with three zones, an Ubuntu portal in the DMZ, a Kali attacker, Snort watching the perimeter, and WPA3-Enterprise wireless.</li>
+<li><strong>Live demo:</strong> we bring the environment up, run the <code>nmap</code> scan and watch Snort alert, then attempt the DMZ-to-LAN pivot and watch pfSense drop it.</li>
+<li><strong>Fallback:</strong> if the live demo fails, we switch to the recorded video in the repo and keep going.</li>
+<li><strong>Repository:</strong> https://github.com/UIWCyber/PLACEHOLDER-your-team-repo</li>
+</ul>
+<div class="callout c-tip"><span class="c-label">Tip</span><span class="c-body">Rehearse the demo on the exact machine you will present from. A failed cable should never cost you the demo; that is what the recording is for.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">14</div></section>
+<section class="slide s-content" data-index="15"><h1 class="s-title">Challenges and Limitations</h1><div class="s-body"><ul>
+<li><strong>Challenges (what was hard to build):</strong></li>
+<li class="sub">Getting pfSense to route three interfaces correctly took several tries before DMZ and LAN were truly isolated.</li>
+<li class="sub">Snort produced noisy alerts until we tuned the rule set down to the scans we cared about.</li>
+<li class="sub">WPA3-Enterprise needed a working RADIUS setup, which was the longest single task in the project.</li>
+<li><strong>Limitations (what we did not solve):</strong></li>
+<li class="sub">The whole build runs on one host in nested virtualization; performance is fine for a demo, not for real traffic.</li>
+<li class="sub">The IDS detects the scans we tuned for; a slow or fragmented scan could still slip past.</li>
+<li class="sub">We hardened the perimeter, but we did not harden the individual endpoints beyond the network layer.</li>
+</ul></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">15</div></section>
+<section class="slide s-content" data-index="16"><h1 class="s-title">Future Work</h1><div class="s-body"><p>1. <strong>Add an IPS mode:</strong> move Snort from detection to inline prevention so the scan is dropped, not just alerted.</p>
+<p>2. <strong>Central logging:</strong> forward pfSense and Snort logs to a small SIEM so alerts and drops are correlated in one place.</p>
+<p>3. <strong>Endpoint hardening:</strong> extend the project into Module 5 with host firewalls and patch baselines on the DMZ and LAN machines.</p></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">16</div></section>
+<section class="slide s-content" data-index="17"><h1 class="s-title">Conclusion</h1><div class="s-body"><ul>
+<li><strong>Outcome:</strong> a segmented small-business network where a web-portal compromise can no longer reach internal records, with an IDS that sees the attack and WPA3-Enterprise on the air.</li>
+<li><strong>What we learned:</strong> segmentation and monitoring are the highest-value, lowest-cost defenses for a small office; most of the risk came from the flat network, not from any single exploit.</li>
+<li><strong>Course modules demonstrated:</strong> attack surfaces and controls (Module 2), infrastructure monitoring (Module 8), infrastructure security (Module 9), and wireless defenses (Module 10), all in one build we attacked and then defended.</li>
+<li><strong>Repository:</strong> https://github.com/UIWCyber/PLACEHOLDER-your-team-repo</li>
+</ul>
+<div class="callout c-tip"><span class="c-label">Tip</span><span class="c-body">Close by naming the one defense you are proudest of and the one risk you knowingly accepted. Honest security reasoning lands better than a claim of perfect security.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">17</div></section>
+<section class="slide s-content" data-index="18"><h1 class="s-title">References</h1><div class="s-body"><ul>
+<li>Format every citation in APA. If you are unsure of the format, build it at https://www.citationmachine.net/apa and paste the result here.</li>
+<li>Cybersecurity and Infrastructure Security Agency. (n.d.). <em>Layering network security through segmentation</em>. CISA. https://www.cisa.gov/</li>
+<li>Netgate. (n.d.). <em>pfSense documentation</em>. Netgate Docs. https://docs.netgate.com/pfsense/en/latest/</li>
+<li>The Snort Project. (n.d.). <em>Snort users manual</em>. Snort. https://docs.snort.org/</li>
+</ul>
+<div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Cite real sources you actually used. Do not invent authors or dates for real documents; if a source has no date, write "n.d." as shown above.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">18</div></section>
+</div></div>
+<div id="hud"></div>
+<div id="notes"><h3>Speaker Notes (press N to hide)</h3><div id="notes-body"></div></div>
+<div id="grid"></div>
+<script>window.__NOTES__="";</script>
+<script>
+(function(){
+  var deck=document.getElementById('deck'), stage=document.getElementById('stage');
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var prog=document.getElementById('prog'), hud=document.getElementById('hud');
+  var notes=document.getElementById('notes'), grid=document.getElementById('grid');
+  var i=0, N=slides.length;
+  function fit(){
+    var pad=0, sw=(window.innerWidth-pad)/1280, sh=(window.innerHeight-pad)/720;
+    var s=Math.min(sw,sh); deck.style.transform='scale('+s+')';
+  }
+  function show(n){
+    i=Math.max(0,Math.min(N-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i);});
+    prog.style.width=((i+1)/N*100)+'%';
+    hud.textContent=(i+1)+' / '+N+'   [←→] nav  [N]otes  [G]rid  [P]rint';
+    location.hash=(i+1);
+  }
+  function next(){show(i+1);} function prev(){show(i-1);}
+  window.addEventListener('resize',fit);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(N-1);}
+    else if(e.key==='n'||e.key==='N'){notes.classList.toggle('show');}
+    else if(e.key==='g'||e.key==='G'){grid.classList.toggle('show');}
+    else if(e.key==='p'||e.key==='P'){window.print();}
+    else if(e.key==='Escape'){grid.classList.remove('show');}
+    else if(/^[0-9]$/.test(e.key)){/* number jump buffer */ jump(e.key);}
+  });
+  // click nav
+  stage.addEventListener('click',function(e){ if(e.target.closest('#grid'))return; next(); });
+  // number jump
+  var buf=''; var bt;
+  function jump(d){buf+=d; clearTimeout(bt); bt=setTimeout(function(){var n=parseInt(buf,10); if(n)show(n-1); buf='';},600);}
+  // grid
+  slides.forEach(function(s,k){
+    var g=document.createElement('div'); g.className='g';
+    var h=s.querySelector('.s-title,.title-main'); var t=s.querySelector('.tag');
+    g.innerHTML='<div class="gt">'+(t?t.textContent:'')+'</div><div class="gh">'+
+      (h?h.textContent:('Slide '+(k+1)))+'</div><div class="gn">'+(k+1)+'</div>';
+    g.addEventListener('click',function(ev){ev.stopPropagation();grid.classList.remove('show');show(k);});
+    grid.appendChild(g);
+  });
+  // init from hash
+  var h=parseInt((location.hash||'').replace('#',''),10);
+  fit(); show(isNaN(h)?0:h-1);
+})();
+</script>
+<script>
+(function(){
+  var nb=document.getElementById('notes-body');
+  if(window.__NOTES__){ nb.textContent=window.__NOTES__; }
+})();
+</script>
+</body></html>
