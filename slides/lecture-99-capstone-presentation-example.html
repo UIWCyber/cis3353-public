@@ -21,6 +21,10 @@ html,body{margin:0;height:100%;background:#111;color:var(--ink);font-family:var(
 /* accent rails */
 #deck::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:var(--red);z-index:5}
 .s-title{background:#1f1f22}
+.s-table{border-collapse:collapse;width:100%;margin:14px 0;font-size:19px}
+.s-table th{background:#26262a;color:#fff;text-align:left;font-weight:700;padding:8px 12px;border-bottom:2px solid var(--red)}
+.s-table td{padding:8px 12px;border-bottom:1px solid #34343a;color:#e8e8ea;vertical-align:top}
+.s-table tr:last-child td{border-bottom:none}
 .title-band{border-left:8px solid var(--red);padding:8px 0 8px 28px}
 .title-kicker{color:var(--red-lt);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:20px}
 .title-main{font-size:52px;line-height:1.08;margin:14px 0 18px;font-weight:800}
@@ -158,11 +162,7 @@ pre.code{background:#0f1013;border:1px solid #33353c;border-radius:10px;padding:
 <section class="slide s-content" data-index="7"><h1 class="s-title">Milestone 2, Build - User Stories</h1><div class="s-body"><ul>
 <li>Present each story as a row: User Story, Assigned To, Committed By, Status. The member who owns the row is the member who speaks to it.</li>
 </ul>
-<p>| User Story | Assigned To | Committed By | Status |</p>
-<p>| --- | --- | --- | --- |</p>
-<p>| US-1 Three zones on pfSense (WAN, DMZ, LAN) | Alice | Alice | Done |</p>
-<p>| US-2 Ubuntu web portal deployed in the DMZ | Carol | Carol | Done |</p>
-<p>| US-3 Kali attacker on the WAN segment | Bob | Bob | Done |</p>
+<table class="s-table"><thead><tr><th>User Story</th><th>Assigned To</th><th>Committed By</th><th>Status</th></tr></thead><tbody><tr><td>US-1 Three zones on pfSense (WAN, DMZ, LAN)</td><td>Alice</td><td>Alice</td><td>Done</td></tr><tr><td>US-2 Ubuntu web portal deployed in the DMZ</td><td>Carol</td><td>Carol</td><td>Done</td></tr><tr><td>US-3 Kali attacker on the WAN segment</td><td>Bob</td><td>Bob</td><td>Done</td></tr></tbody></table>
 <div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Assigned To is who was assigned on the board; Committed By is who pushed the work. Under Individual Commits these must match for you to earn the points.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">7</div></section>
 <section class="slide s-content" data-index="8"><h1 class="s-title">Milestone 2, Build - Evidence</h1><div class="s-body"><ul>
 <li>Evidence lives here: screenshots, terminal output, and commit hashes that prove each story is real.</li>
@@ -187,11 +187,7 @@ pre.code{background:#0f1013;border:1px solid #33353c;border-radius:10px;padding:
 <li><strong>Mocked example 2:</strong> <code>nc</code> output showing a successful connection from the DMZ host to a LAN workstation on port 445, committed as <code>3ab77f1</code>.</li>
 </ul>
 <div class="callout c-tip"><span class="c-label">Tip</span><span class="c-body">Show a before and after. "The pivot connected here; here is the commit and the later test where it is refused" is the strongest evidence pattern.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">11</div></section>
-<section class="slide s-content" data-index="12"><h1 class="s-title">Milestone 3, Defend - User Stories</h1><div class="s-body"><p>| User Story | Assigned To | Committed By | Status |</p>
-<p>| --- | --- | --- | --- |</p>
-<p>| US-4 Firewall rules block DMZ to LAN | Alice | Alice | Done |</p>
-<p>| US-5 Snort IDS alerts on the port scan | Bob | Bob | Done |</p>
-<p>| US-6 WPA3-Enterprise wireless for staff | Carol | Carol | Done |</p>
+<section class="slide s-content" data-index="12"><h1 class="s-title">Milestone 3, Defend - User Stories</h1><div class="s-body"><table class="s-table"><thead><tr><th>User Story</th><th>Assigned To</th><th>Committed By</th><th>Status</th></tr></thead><tbody><tr><td>US-4 Firewall rules block DMZ to LAN</td><td>Alice</td><td>Alice</td><td>Done</td></tr><tr><td>US-5 Snort IDS alerts on the port scan</td><td>Bob</td><td>Bob</td><td>Done</td></tr><tr><td>US-6 WPA3-Enterprise wireless for staff</td><td>Carol</td><td>Carol</td><td>Done</td></tr></tbody></table>
 <div class="callout c-note"><span class="c-label">Note</span><span class="c-body">The member who owns each row is the member who speaks to it. Do not narrate a teammate's story.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>Capstone presentation example</span></div><div class="s-num">12</div></section>
 <section class="slide s-content" data-index="13"><h1 class="s-title">Defend - Verification Evidence</h1><div class="s-body"><ul>
 <li><strong>US-4, DMZ to LAN blocked:</strong> the same <code>nc -zv 10.10.20.10 445</code> from the DMZ now times out; pfSense firewall log shows the drop. Rule and log committed as <code>c8d4f0a</code>.</li>

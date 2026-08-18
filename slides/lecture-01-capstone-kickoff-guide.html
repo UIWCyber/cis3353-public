@@ -21,6 +21,10 @@ html,body{margin:0;height:100%;background:#111;color:var(--ink);font-family:var(
 /* accent rails */
 #deck::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;background:var(--red);z-index:5}
 .s-title{background:#1f1f22}
+.s-table{border-collapse:collapse;width:100%;margin:14px 0;font-size:19px}
+.s-table th{background:#26262a;color:#fff;text-align:left;font-weight:700;padding:8px 12px;border-bottom:2px solid var(--red)}
+.s-table td{padding:8px 12px;border-bottom:1px solid #34343a;color:#e8e8ea;vertical-align:top}
+.s-table tr:last-child td{border-bottom:none}
 .title-band{border-left:8px solid var(--red);padding:8px 0 8px 28px}
 .title-kicker{color:var(--red-lt);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:20px}
 .title-main{font-size:52px;line-height:1.08;margin:14px 0 18px;font-weight:800}
@@ -247,37 +251,19 @@ pre.code{background:#0f1013;border:1px solid #33353c;border-radius:10px;padding:
 <li>Contribution split: <strong>Alice 33.3%, Bob 33.3%, Carol 33.3%.</strong> Each multiplier is 3 x 0.333 = 1.0.</li>
 <li>At a 1.0 multiplier every member receives the exact team component score, and no cap is triggered.</li>
 </ul>
-<p>| Component (team) | Alice | Bob | Carol |</p>
-<p>| --- | --- | --- | --- |</p>
-<p>| Proposal (0.9) | 0.9 | 0.9 | 0.9 |</p>
-<p>| Implementation (13.0) | 13.0 | 13.0 | 13.0 |</p>
-<p>| Presentation (8.7) | 8.7 | 8.7 | 8.7 |</p>
-<p>| Wiki (7.9) | 7.9 | 7.9 | 7.9 |</p>
-<p>| <strong>Total / 35</strong> | <strong>30.5</strong> | <strong>30.5</strong> | <strong>30.5</strong> |</p>
+<table class="s-table"><thead><tr><th>Component (team)</th><th>Alice</th><th>Bob</th><th>Carol</th></tr></thead><tbody><tr><td>Proposal (0.9)</td><td>0.9</td><td>0.9</td><td>0.9</td></tr><tr><td>Implementation (13.0)</td><td>13.0</td><td>13.0</td><td>13.0</td></tr><tr><td>Presentation (8.7)</td><td>8.7</td><td>8.7</td><td>8.7</td></tr><tr><td>Wiki (7.9)</td><td>7.9</td><td>7.9</td><td>7.9</td></tr><tr><td><strong>Total / 35</strong></td><td><strong>30.5</strong></td><td><strong>30.5</strong></td><td><strong>30.5</strong></td></tr></tbody></table>
 <div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Equal work, equal grade. This is the baseline the formula is built around.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>4.0 Security Operations · 5.0 Security Program Management &amp; Oversight</span></div><div class="s-num">25</div></section>
 <section class="slide s-content" data-index="26"><h1 class="s-title">Scenario B, Moderate Imbalance</h1><div class="s-body"><ul>
 <li>Split: <strong>Alice 50%, Bob 30%, Carol 20%.</strong> Multipliers: Alice 1.5, Bob 0.9, Carol 0.6.</li>
 <li>Alice's 1.5 multiplier caps her in every component; Bob and Carol scale proportionally with no cap reached.</li>
 </ul>
-<p>| Component (team) | Alice (x1.5) | Bob (x0.9) | Carol (x0.6) |</p>
-<p>| --- | --- | --- | --- |</p>
-<p>| Proposal (0.9) | 1.0 cap | 0.81 | 0.54 |</p>
-<p>| Implementation (13.0) | 15.0 cap | 11.70 | 7.80 |</p>
-<p>| Presentation (8.7) | 10.0 cap | 7.83 | 5.22 |</p>
-<p>| Wiki (7.9) | 9.0 cap | 7.11 | 4.74 |</p>
-<p>| <strong>Total / 35</strong> | <strong>35.0</strong> | <strong>27.45</strong> | <strong>18.30</strong> |</p>
+<table class="s-table"><thead><tr><th>Component (team)</th><th>Alice (x1.5)</th><th>Bob (x0.9)</th><th>Carol (x0.6)</th></tr></thead><tbody><tr><td>Proposal (0.9)</td><td>1.0 cap</td><td>0.81</td><td>0.54</td></tr><tr><td>Implementation (13.0)</td><td>15.0 cap</td><td>11.70</td><td>7.80</td></tr><tr><td>Presentation (8.7)</td><td>10.0 cap</td><td>7.83</td><td>5.22</td></tr><tr><td>Wiki (7.9)</td><td>9.0 cap</td><td>7.11</td><td>4.74</td></tr><tr><td><strong>Total / 35</strong></td><td><strong>35.0</strong></td><td><strong>27.45</strong></td><td><strong>18.30</strong></td></tr></tbody></table>
 <div class="callout c-note"><span class="c-label">Note</span><span class="c-body">Alice is rewarded up to each ceiling; Carol still earns a real 18.30 for a real 20 percent.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>4.0 Security Operations · 5.0 Security Program Management &amp; Oversight</span></div><div class="s-num">26</div></section>
 <section class="slide s-content" data-index="27"><h1 class="s-title">Scenario C, A Zero Contributor</h1><div class="s-body"><ul>
 <li>Split: <strong>Alice 60%, Bob 40%, Carol 0%.</strong> Multipliers: Alice 1.8, Bob 1.2, Carol 0.</li>
 <li>Both contributors clear the cap threshold (about 1.15 for this team), so both land at the maximum. Carol earns nothing.</li>
 </ul>
-<p>| Component (team) | Alice (x1.8) | Bob (x1.2) | Carol (x0) |</p>
-<p>| --- | --- | --- | --- |</p>
-<p>| Proposal (0.9) | 1.0 cap | 1.0 cap | 0 |</p>
-<p>| Implementation (13.0) | 15.0 cap | 15.0 cap | 0 |</p>
-<p>| Presentation (8.7) | 10.0 cap | 10.0 cap | 0 |</p>
-<p>| Wiki (7.9) | 9.0 cap | 9.0 cap | 0 |</p>
-<p>| <strong>Total / 35</strong> | <strong>35.0</strong> | <strong>35.0</strong> | <strong>0</strong> |</p>
+<table class="s-table"><thead><tr><th>Component (team)</th><th>Alice (x1.8)</th><th>Bob (x1.2)</th><th>Carol (x0)</th></tr></thead><tbody><tr><td>Proposal (0.9)</td><td>1.0 cap</td><td>1.0 cap</td><td>0</td></tr><tr><td>Implementation (13.0)</td><td>15.0 cap</td><td>15.0 cap</td><td>0</td></tr><tr><td>Presentation (8.7)</td><td>10.0 cap</td><td>10.0 cap</td><td>0</td></tr><tr><td>Wiki (7.9)</td><td>9.0 cap</td><td>9.0 cap</td><td>0</td></tr><tr><td><strong>Total / 35</strong></td><td><strong>35.0</strong></td><td><strong>35.0</strong></td><td><strong>0</strong></td></tr></tbody></table>
 <div class="callout c-warn"><span class="c-label">Watch out</span><span class="c-body">The formula protects the members who did the work. Non-participation is isolated to the non-participant; it does not drag the team down.</span></div></div><div class="s-foot"><span>CIS 3353 Computer Systems Security</span><span>4.0 Security Operations · 5.0 Security Program Management &amp; Oversight</span></div><div class="s-num">27</div></section>
 <section class="slide s-content" data-index="28"><h1 class="s-title">Deadlines and the Missed-Presentation Rule</h1><div class="s-body"><ul>
 <li><strong>Labs, quizzes, and the proposal</strong> lose 15 percent for each calendar day they are late.</li>
