@@ -179,21 +179,6 @@ table.sched{border-collapse:collapse;width:100%;font-size:.92rem;min-width:640px
 }
 .sched-empty{padding:1rem;text-align:center;color:var(--muted);display:none}
 
-/* ---------- cards / panels ---------- */
-.panel{
-  background:var(--surface);border:1px solid var(--line);border-radius:12px;
-  padding:1.1rem 1.3rem;box-shadow:var(--shadow);margin-top:1rem;
-}
-.panel h3{margin-top:0}
-.steps{counter-reset:step;list-style:none;margin:.6rem 0 0;padding:0;display:grid;gap:.55rem}
-.steps li{position:relative;padding-left:2.2rem;font-size:.92rem}
-.steps li::before{
-  counter-increment:step;content:counter(step);
-  position:absolute;left:0;top:.05rem;width:1.5rem;height:1.5rem;border-radius:50%;
-  background:var(--red);color:#fff;font-weight:800;font-size:.78rem;
-  display:flex;align-items:center;justify-content:center;
-}
-
 /* ---------- grading ---------- */
 .gbar{display:flex;height:2.6rem;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);margin:.9rem 0 .5rem}
 .gbar .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;min-width:0}
@@ -219,7 +204,7 @@ code{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 
-/* ---------- resources ---------- */
+/* ---------- cards / panels ---------- */
 .res-grid{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
 .res{
   display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px;
@@ -259,7 +244,7 @@ footer .links a{font-weight:600}
   .gbar .seg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .table-scroll{overflow:visible;box-shadow:none}
   a[href^="http"]::after{content:""}
-  tr,td,.pol,.panel{break-inside:avoid}
+  tr,td,.lab-card,.pol,.panel{break-inside:avoid}
 }
 @media (max-width:560px){
   .countdown .num{font-size:2.3rem}
